@@ -116,15 +116,22 @@ function fetchAndDisplay(url: string) {
       return response.json();
     })
     .then((questions: IQuestion[]) => {
-      clickButton(questions, language);
       displayQuestions(questions, questionIndex);
+      nextQuestionButton.addEventListener("click", () => {
+        questionIndex++;
+        if (questionIndex < questions.length) {
+          displayQuestions(questions, questionIndex);
+        } else {
+          displayResults();
+        }
+      });
     })
     .catch((error) => {
       questionOutput.innerHTML = `Could not get data. Error: ${error}`;
     })
     .finally(() => {
       loadingIndicator.style.display = 'none';
-    })
+    });
 }
 
 let questionIndex = 0;
@@ -139,11 +146,11 @@ function displayQuestions(questions: IQuestion[], index: number) {
     questionOutput.appendChild(questionForm);
 
     const headline = document.createElement("h2");
-    headline.setAttribute('id', 'headline')
-    if (index <= 19) {
+    headline.setAttribute('id', 'headline');
+    if (index < questions.length) {
       headline.innerHTML = questions[index].question;
     } else {
-      return '';
+      return;
     }
     questionForm.appendChild(headline);
 
@@ -151,7 +158,7 @@ function displayQuestions(questions: IQuestion[], index: number) {
 
     questions[index].answers.forEach((answer) => {
       const optionsDiv = document.createElement('div');
-      questionForm.appendChild(optionsDiv)
+      questionForm.appendChild(optionsDiv);
       const radioOption = document.createElement("input");
       radioOption.setAttribute("name", "option");
       radioOption.setAttribute("type", "radio");
@@ -160,13 +167,13 @@ function displayQuestions(questions: IQuestion[], index: number) {
       optionsDiv.appendChild(radioOption);
 
       const radioLabel = document.createElement("label");
-      radioLabel.setAttribute('id', 'radiolabel')
+      radioLabel.setAttribute('id', 'radiolabel');
       radioLabel.setAttribute("for", answer);
       radioLabel.innerHTML = answer;
       optionsDiv.appendChild(radioLabel);
 
       const answerOutput = document.createElement("h2");
-      answerOutput.setAttribute('id', 'answerOutput')
+      answerOutput.setAttribute('id', 'answerOutput');
       questionOutput.appendChild(answerOutput);
 
       let currentAnswerIndex = answerIndex;
@@ -175,11 +182,11 @@ function displayQuestions(questions: IQuestion[], index: number) {
         if (currentAnswerIndex == questions[index].correct) {
           correctAnswers++;
           answerOutput.innerHTML = "Correct :)";
-          answerOutput.style.color = 'green'
+          answerOutput.style.color = 'green';
         } else {
           wrongAnswers++;
           answerOutput.innerHTML = "Wrong :(";
-          answerOutput.style.color = 'red'
+          answerOutput.style.color = 'red';
         }
         nextQuestionButton.removeAttribute('disabled');
       });
@@ -189,22 +196,14 @@ function displayQuestions(questions: IQuestion[], index: number) {
   }
 }
 
-function clickButton(questions: IQuestion[], language: string) {
-  nextQuestionButton?.addEventListener("click", () => {
-    displayQuestions(questions, questionIndex);
-    if (questions.length - 1 == questionIndex) {
-      nextQuestionButton.innerHTML = 'Finish';
-    } else if (questions.length == questionIndex) {
-      const resultOutput = document.createElement('h1');
-      resultOutput.setAttribute('id', 'resultOutput')
-      questionOutput.appendChild(resultOutput);
-      if (language == 'english') {
-        resultOutput.innerHTML = `You had ${correctAnswers} correct answers and ${wrongAnswers} wrong answers.`;
-      } else if (language == 'deutsch') {
-        resultOutput.innerHTML = `Du hattest ${correctAnswers} richtige Antworten und ${wrongAnswers} falsche Antworten.`;
-      }
-      nextQuestionButton.style.display = 'none';
-    }
-    questionIndex++;
-  });
+function displayResults() {
+  const resultOutput = document.createElement('h1');
+  resultOutput.setAttribute('id', 'resultOutput');
+  questionOutput.appendChild(resultOutput);
+  if (language == 'english') {
+    resultOutput.innerHTML = `You had ${correctAnswers} correct answers and ${wrongAnswers} wrong answers.`;
+  } else if (language == 'deutsch') {
+    resultOutput.innerHTML = `Du hattest ${correctAnswers} richtige Antworten und ${wrongAnswers} falsche Antworten.`;
+  }
+  nextQuestionButton.style.display = 'none';
 }
