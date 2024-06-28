@@ -29,6 +29,10 @@ nav {
     gap: 2rem;
 }
 
+h5 {
+    margin-top: 1rem;
+}
+
 #start-button {
     width: 40rem;
     height: 20rem;

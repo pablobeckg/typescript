@@ -32,6 +32,8 @@ languageDeutschRadio.addEventListener("change", () => {
   if (languageDeutschRadio.checked) {
     handleLanguageChange(languageDeutschRadio.value);
   }
+  startButton.innerHTML = 'Starten'
+  nextQuestionButton.innerHTML = "Nächste Frage"
 });
 
 difficultyEasyRadio.addEventListener("change", () => {
@@ -108,6 +110,7 @@ function fetchAndDisplay(url: string) {
     return;
   }
 
+
   fetch(url)
     .then((response: Response) => {
       if (!response.ok) {
@@ -121,7 +124,15 @@ function fetchAndDisplay(url: string) {
         questionIndex++;
         if (questionIndex < questions.length) {
           displayQuestions(questions, questionIndex);
+          if(questionIndex == 19) {
+            if(language == 'english') {
+              nextQuestionButton.innerHTML = 'Finish'
+            } else if (language == 'deutsch') {
+              nextQuestionButton.innerHTML = 'Beenden'
+            }
+          }
         } else {
+          questionOutput.innerHTML = "";
           displayResults();
         }
       });
@@ -153,6 +164,13 @@ function displayQuestions(questions: IQuestion[], index: number) {
       return;
     }
     questionForm.appendChild(headline);
+    const questionCounterInOutput = document.createElement('h5');
+    if(language == 'english') {
+      questionCounterInOutput.innerHTML= `Question ${questionIndex +1} from ${questions.length}`
+    } else if (language == 'deutsch') {
+      questionCounterInOutput.innerHTML= `Frage ${questionIndex +1} von ${questions.length}`
+    }
+    questionOutput.appendChild(questionCounterInOutput)
 
     let answerIndex = 0;
 
@@ -181,12 +199,20 @@ function displayQuestions(questions: IQuestion[], index: number) {
         event.preventDefault();
         if (currentAnswerIndex == questions[index].correct) {
           correctAnswers++;
-          answerOutput.innerHTML = "Correct :)";
           answerOutput.style.color = 'green';
+          if (language == 'english') {
+            answerOutput.innerHTML = "Correct :)";
+          } else if (language == 'deutsch') {
+            answerOutput.innerHTML = "Korrekt :)";
+          }
         } else {
           wrongAnswers++;
-          answerOutput.innerHTML = "Wrong :(";
           answerOutput.style.color = 'red';
+          if (language == 'english') {
+            answerOutput.innerHTML = "Wrong :(";
+          } else if (language == 'deutsch') {
+            answerOutput.innerHTML = "Falsch :(";
+        }
         }
         nextQuestionButton.removeAttribute('disabled');
       });
