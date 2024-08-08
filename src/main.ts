@@ -1,4 +1,4 @@
-import { IQuestion } from "/scripts/IQuestion";
+import { IQuestion } from "./scripts/IQuestion";
 
 const languageEnglishRadio = document.getElementById("language-choice-english") as HTMLInputElement;
 const languageDeutschRadio = document.getElementById("language-choice-deutsch") as HTMLInputElement;
